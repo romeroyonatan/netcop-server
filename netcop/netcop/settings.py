@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'foundationform',
     'clases',
 ]
 
@@ -124,3 +123,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+# openshift is our PAAS for now.
+if 'OPENSHIFT_REPO_DIR' in os.environ:
+    try:
+        from .openshift import *
+    except:
+        print("La configuracion de openshift no pudo ser cargada")
