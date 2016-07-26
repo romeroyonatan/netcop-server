@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+*.swp
+*.sqlite3
+netcop/static/bower_components

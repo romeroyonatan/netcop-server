@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title|default:'Netcop' }}</title>
+    <link rel="stylesheet" href="{% static 'bower_components/foundation-sites/dist/foundation.css' %}"/>
+    <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+	{% block extracss %}{% endblock %}
+	{% block extrahead %}{% endblock %}
+  </head>
+  <body>
+
+	{% block body %}{% endblock %}
+
+    <script src="{% static 'bower_components/jquery/dist/jquery.js'%}"></script>
+    <script src="{% static 'bower_components/what-input/what-input.js' %}"></script>
+    <script src="{% static 'bower_components/foundation-sites/dist/foundation.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+	{% block extrajs %}{% endblock %}
+  </body>
+</html>

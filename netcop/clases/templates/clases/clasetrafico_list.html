@@ -1,0 +1,32 @@
+{% extends 'netcop.html' %}
+{% block main %}
+  <h1>Clases de tráfico</h1>
+  <div class="row">
+    <div class="small-12 columns">
+      {% for clase in object_list %}
+        <div class="row">
+          <div class="small-4 medium-3 columns">
+            {{ clase.nombre }}
+            {% if clase.activa %}
+              <span class="success badge"><i class="fa fa-check"></i></span>
+            {% else %}
+              <span class="secondary badge"><i class="fa fa-times"></i></span>
+            {% endif %}
+          </div>
+          <div class="small-6 medium-3 columns">
+            {{ clase.descripcion }}
+          </div>
+          <div class="hide-for-small-only medium-2 columns">
+            Acá van las redes
+          </div>
+          <div class="hide-for-small-only medium-2 columns">
+            Acá van los puertos
+          </div>
+          <div class="small-2 columns">
+            <a href="{% url 'update' clase.pk %}">Editar</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block body %}
+  <div class="expanded row">
+    <div class="small-12 columns">
+      <form action="." method="get">
+        <div class="top-bar">
+          <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+              <li class="menu-text">Netcop</li>
+              <li><a href="{% url 'index' %}">Lista de clases</a></li>
+              <li><a href="{% url 'create' %}">Crear clase</a></li>
+            </ul>
+          </div>
+          <div class="top-bar-right">
+            <ul class="menu">
+              <li>
+                <input type="search" name="q" placeholder="Buscar"
+                       value="{{ request.GET.q }}"/>
+              </li>
+              <li><button type="submit" class="button">Buscar</button></li>
+            </ul>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="small-12 columns">
+      {% block main%}{% endblock %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'netcop.html' %}
+{% load foundation %}
+{% block main %}
+    <h1>Editar clase de tráfico</h1>
+    <form action="." method="post"> {% csrf_token %}
+        {{ form|foundation }}
+        <input type="submit" value="Guardar"/>
+    </form>
+{% endblock %}
