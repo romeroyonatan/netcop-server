@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 
-from . import models
+from . import models, forms
 
 
 class ClaseList(generic.ListView):
@@ -18,11 +18,11 @@ class ClaseList(generic.ListView):
 
 class ClaseCreate(generic.CreateView):
     model = models.ClaseTrafico
-    fields = '__all__'
     success_url = reverse_lazy('index')
+    form_class = forms.ClaseForm
 
 
 class ClaseUpdate(generic.UpdateView):
     model = models.ClaseTrafico
-    fields = '__all__'
+    form_class = forms.ClaseForm
     success_url = reverse_lazy('index')
