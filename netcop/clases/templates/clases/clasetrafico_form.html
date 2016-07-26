@@ -1,9 +1,33 @@
 {% extends 'netcop.html' %}
-{% load foundation %}
 {% block main %}
-    <h1>Editar clase de tráfico</h1>
-    <form action="." method="post"> {% csrf_token %}
-        {{ form|foundation }}
-        <input type="submit" value="Guardar"/>
-    </form>
+  <div class="row">
+    <div class="small-12 medium-9 medium-centered columns">
+      <h1>Editar clase de tráfico</h1>
+      <form action="." method="post"> {% csrf_token %}
+        {% for field in form %}
+          <div class="row">
+            <div class="small-12 columns">
+              {% if field.errors %}
+                <div class="callout alert">
+                  {{ field.errors }}
+                </div>
+              {% endif %}
+              {{ field.label_tag }} {{ field }}
+              {% if field.help_text %}
+                <p class="help-text">{{ field.help_text|safe }}</p>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+        <button type="submit" class="success button">
+          <i class="fa fa-save"></i>
+          Guardar
+        </button>
+        <a href="{% url 'index' %}" class="warning button">
+          <i class="fa fa-times"></i>
+          Cancelar
+        </a>
+      </form>
+    </div>
+  </div>
 {% endblock %}

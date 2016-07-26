@@ -17,10 +17,14 @@
             {{ clase.descripcion }}
           </div>
           <div class="hide-for-small-only medium-2 columns">
-            Acá van las redes
+            {% for red in clase.redes.all %}
+              {{ red.cidr }}
+            {% endfor %}
           </div>
           <div class="hide-for-small-only medium-2 columns">
-            Acá van los puertos
+            {% for puerto in clase.puertos.all %}
+              {{ puerto.puerto }}
+            {% endfor %}
           </div>
           <div class="small-2 columns">
             <a href="{% url 'update' clase.pk %}">Editar</a>
