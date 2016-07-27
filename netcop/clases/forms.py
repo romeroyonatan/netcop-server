@@ -1,6 +1,6 @@
 import re
 import os
-import time
+import uuid
 from . import models
 from django import forms
 from django.conf import settings
@@ -84,9 +84,7 @@ class ClaseForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         clase = super().save(*args, **kwargs)
         self.actualizar_colecciones(clase, self.cleaned_data)
-        path = os.path.join(settings.MEDIA_ROOT, 'version')
-        with open(path, 'w') as f:
-            f.write(str(time.time()))
+        self.calcular_version()
         return clase
 
     def actualizar_colecciones(self, clase, campos):
@@ -222,3 +220,12 @@ class ClaseForm(forms.ModelForm):
                     "%s: el número de puerto debe ser entre %d y %d" %
                     (numero, PUERTO_MIN, PUERTO_MAX)
                 )
+
+    def calcular_version(self):
+        '''
+        Calcula el nuevo numero de version y lo guarda en un archivo para
+        proximas consultas.
+        '''
+        path = os.path.join(settings.MEDIA_ROOT, 'version')
+        with open(path, 'w') as f:
+            f.write(uuid.uuid4().hex)

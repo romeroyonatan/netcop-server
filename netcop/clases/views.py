@@ -1,5 +1,4 @@
 import os
-import hashlib
 from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse, Http404
