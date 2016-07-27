@@ -1,7 +1,9 @@
+import os
 import hashlib
 from django.core.urlresolvers import reverse_lazy
 from django.views import generic
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
+from django.conf import settings
 
 from . import models, forms
 
@@ -70,6 +72,9 @@ class VersionView(ClaseJson):
     Lo obtiene haciendo una suma SHA256 del json de las clases.
     '''
     def get(self, *args, **kwargs):
-        response = super().get(*args, **kwargs) 
-        version = hashlib.sha256(response.content).hexdigest()
+        path = os.path.join(settings.MEDIA_ROOT, 'version')
+        with open(path, 'r') as f:
+            version = f.read()
+        if not version:
+            raise Http404()
         return JsonResponse({"version": str(version)})

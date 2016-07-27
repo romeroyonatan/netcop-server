@@ -1,6 +1,10 @@
 import re
+import os
+import time
 from . import models
 from django import forms
+from django.conf import settings
+
 
 REGEX_CIDR = ("^\s*(?P<ip>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
               "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))"
@@ -80,6 +84,9 @@ class ClaseForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         clase = super().save(*args, **kwargs)
         self.actualizar_colecciones(clase, self.cleaned_data)
+        path = os.path.join(settings.MEDIA_ROOT, 'version')
+        with open(path, 'w') as f:
+            f.write(str(time.time()))
         return clase
 
     def actualizar_colecciones(self, clase, campos):
