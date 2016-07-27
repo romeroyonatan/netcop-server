@@ -8,7 +8,6 @@
           <th>ID</th>
           <th>Nombre</th>
           <th>Descripcion</th>
-          <th>Activa</th>
           <th class="hide-for-small-only">Subredes</th>
           <th class="hide-for-small-only">Puertos</th>
         </th>
@@ -16,7 +15,9 @@
       <tbody>
         {% for clase in object_list %}
           <tr>
+            {# ID #}
             <td><a href="{% url 'update' clase.pk %}">{{ clase.id }}</a></td>
+            {# nombre #}
             <td>
               {% if clase.activa %}
                 <span class="success badge" title="Activa"><i class="fa fa-check"></i></span>
@@ -25,8 +26,11 @@
               {% endif %}
               {{ clase.nombre }}
             </td>
+            {# descripcion #}
             <td>{{ clase.descripcion|truncatechars:20 }}</td>
+            {# cantidad de redes #}
             <td class="hide-for-small-only">{{ clase.redes.count }}</td>
+            {# cantidad de puertos #}
             <td class="hide-for-small-only">{{ clase.puertos.count }}</td>
           </tr>
         {% endfor %}
