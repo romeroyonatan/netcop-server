@@ -9,9 +9,8 @@
           <th>Nombre</th>
           <th>Descripcion</th>
           <th>Activa</th>
-          <th>Subredes</th>
-          <th>Puertos</th>
-          <th></th>
+          <th class="hide-for-small-only">Subredes</th>
+          <th class="hide-for-small-only">Puertos</th>
         </th>
       </thead>
       <tbody>
@@ -19,7 +18,7 @@
           <tr>
             <td><a href="{% url 'update' clase.pk %}">{{ clase.id }}</a></td>
             <td>{{ clase.nombre }}</td>
-            <td>{{ clase.descripcion }}</td>
+            <td>{{ clase.descripcion|truncatechars:20 }}</td>
             <td>
               {% if clase.activa %}
                 <span class="success badge" title="Activa"><i class="fa fa-check"></i></span>
@@ -27,10 +26,8 @@
                 <span class="secondary badge" title="Inactiva"><i class="fa fa-times"></i></span>
               {% endif %}
             </td>
-            <td>{{ clase.redes.count }}</td>
-            <td>{{ clase.puertos.count }}</td>
-            <td>
-            </td>
+            <td class="hide-for-small-only">{{ clase.redes.count }}</td>
+            <td class="hide-for-small-only">{{ clase.puertos.count }}</td>
           </tr>
         {% endfor %}
       </tbody>

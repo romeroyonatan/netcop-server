@@ -2,7 +2,11 @@
 {% block main %}
   <div class="row">
     <div class="small-12 medium-9 medium-centered columns">
-      <h1>Editar clase de tráfico</h1>
+      {% if object %}
+        <h1>Editar clase de tráfico {{ object.pk }}</h1>
+      {% else %}
+        <h1>Crear clase de tráfico</h1>
+      {% endif %}
       <form action="." method="post"> {% csrf_token %}
 
         {# Botones  #}
