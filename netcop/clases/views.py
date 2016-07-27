@@ -6,7 +6,7 @@ from . import models, forms
 
 class ClaseList(generic.ListView):
     model = models.ClaseTrafico
-    ordering = ('-activa', 'nombre')
+    ordering = ('-activa', 'id')
 
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)

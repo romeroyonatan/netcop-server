@@ -2,35 +2,38 @@
 {% block main %}
   <h1>Clases de tráfico</h1>
   <div class="row">
-    <div class="small-12 columns">
-      {% for clase in object_list %}
-        <div class="row">
-          <div class="small-4 medium-3 columns">
-            {{ clase.nombre }}
-            {% if clase.activa %}
-              <span class="success badge" title="Activa"><i class="fa fa-check"></i></span>
-            {% else %}
-              <span class="secondary badge" title="Inactiva"><i class="fa fa-times"></i></span>
-            {% endif %}
-          </div>
-          <div class="small-6 medium-3 columns">
-            {{ clase.descripcion }}
-          </div>
-          <div class="hide-for-small-only medium-2 columns">
-            {% for item in clase.redes.all %}
-              {{ item.cidr }}
-            {% endfor %}
-          </div>
-          <div class="hide-for-small-only medium-2 columns">
-            {% for item in clase.puertos.all %}
-              {{ item.puerto }}
-            {% endfor %}
-          </div>
-          <div class="small-2 columns">
-            <a href="{% url 'update' clase.pk %}">Editar</a>
-          </div>
-        </div>
-      {% endfor %}
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Activa</th>
+          <th>Subredes</th>
+          <th>Puertos</th>
+          <th></th>
+        </th>
+      </thead>
+      <tbody>
+        {% for clase in object_list %}
+          <tr>
+            <td><a href="{% url 'update' clase.pk %}">{{ clase.id }}</a></td>
+            <td>{{ clase.nombre }}</td>
+            <td>{{ clase.descripcion }}</td>
+            <td>
+              {% if clase.activa %}
+                <span class="success badge" title="Activa"><i class="fa fa-check"></i></span>
+              {% else %}
+                <span class="secondary badge" title="Inactiva"><i class="fa fa-times"></i></span>
+              {% endif %}
+            </td>
+            <td>{{ clase.redes.count }}</td>
+            <td>{{ clase.puertos.count }}</td>
+            <td>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 {% endblock %}
