@@ -32,7 +32,7 @@ class TestCreate(TestCase):
             192.168.1.1
             192.168.2.0/24
             10.200.0.0/16
-            10.0.0.0/8
+            10.0.0.1/8
         """
         # creo formulario
         form = forms.ClaseForm(self.data)
@@ -142,7 +142,7 @@ class TestCreate(TestCase):
         )
         redes_outside = [
             models.CIDR.objects.create(direccion='0.0.0.0', prefijo=0),
-            models.CIDR.objects.create(direccion='1.0.0.0', prefijo=1),
+            models.CIDR.objects.create(direccion='128.0.0.0', prefijo=1),
             models.CIDR.objects.create(direccion='3.3.3.3', prefijo=32),
         ]
         redes_inside = [
@@ -161,7 +161,7 @@ class TestCreate(TestCase):
         form = forms.ClaseForm(instance=clase)
         # verifico que todo este bien
         assert "0.0.0.0/0" in form.initial["subredes_outside"]
-        assert "1.0.0.0/1" in form.initial["subredes_outside"]
+        assert "128.0.0.0/1" in form.initial["subredes_outside"]
         assert "3.3.3.3/32" in form.initial["subredes_outside"]
         assert "10.0.0.0/8" in form.initial["subredes_inside"]
         assert "172.16.0.0/12" in form.initial["subredes_inside"]

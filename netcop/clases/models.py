@@ -1,3 +1,4 @@
+import ipaddress
 from django.db import models
 
 INSIDE = 'i'
@@ -24,6 +25,16 @@ class CIDR(models.Model):
 
     def __str__(self):
         return "%s/%d" % (self.direccion, self.prefijo)
+    
+    def save(self, *args, **kwargs):
+        '''
+        Convierte el atributo direccion a una direccion de red antes de
+        guardarla en caso que se haya pasado una direccion de host.
+        '''
+        net = ipaddress.ip_network("%s/%d" % (self.direccion, self.prefijo),
+                                   strict=False)
+        self.direccion = str(net.network_address)
+        return super().save(*args, **kwargs)
 
 
 class Puerto(models.Model):
