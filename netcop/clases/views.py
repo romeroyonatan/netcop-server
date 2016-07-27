@@ -1,5 +1,7 @@
+import hashlib
 from django.core.urlresolvers import reverse_lazy
 from django.views import generic
+from django.http import JsonResponse
 
 from . import models, forms
 
@@ -26,3 +28,47 @@ class ClaseUpdate(generic.UpdateView):
     model = models.ClaseTrafico
     form_class = forms.ClaseForm
     success_url = reverse_lazy('index')
+
+
+class ClaseJson(generic.View):
+    '''
+    Devuelve las clases en formato json.
+    '''
+
+    def get(self, *args, **kwargs):
+        return JsonResponse({'clases': self.obtener_clases()})
+
+    def obtener_clases(self):
+        lista = list()
+        for clase in models.ClaseTrafico.objects.all().order_by('id'):
+            r = dict()
+            r['id'] = clase.id
+            r['nombre'] = clase.nombre
+            r['descripcion'] = clase.descripcion
+            r['subredes_outside'] = [
+                str(item) for item in clase.redes.filter(grupo=models.OUTSIDE)
+            ]
+            r['subredes_inside'] = [
+                str(item) for item in clase.redes.filter(grupo=models.INSIDE)
+            ]
+            r['puertos_outside'] = [
+                str(item) for item in clase.puertos.filter(
+                    grupo=models.OUTSIDE)
+            ]
+            r['puertos_inside'] = [
+                str(item) for item in clase.puertos.filter(grupo=models.INSIDE)
+            ]
+            lista.append(r)
+        return lista
+
+
+class VersionView(ClaseJson):
+    '''
+    Devuelve numero de version de la base de datos de firmas.
+
+    Lo obtiene haciendo una suma SHA256 del json de las clases.
+    '''
+    def get(self, *args, **kwargs):
+        response = super().get(*args, **kwargs) 
+        version = hashlib.sha256(response.content).hexdigest()
+        return JsonResponse({"version": str(version)})

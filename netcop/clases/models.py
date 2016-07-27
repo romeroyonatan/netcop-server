@@ -55,6 +55,9 @@ class ClaseCIDR(models.Model):
     cidr = models.ForeignKey(CIDR, related_name="clases")
     grupo = models.CharField(max_length=1, choices=grupo_choices)
 
+    def __str__(self):
+        return str(self.cidr)
+
 
 class ClasePuerto(models.Model):
     choices = (
@@ -64,3 +67,6 @@ class ClasePuerto(models.Model):
     clase = models.ForeignKey(ClaseTrafico, related_name="puertos")
     puerto = models.ForeignKey(Puerto, related_name="clases")
     grupo = models.CharField(max_length=1, choices=grupo_choices)
+
+    def __str__(self):
+        return str(self.puerto)

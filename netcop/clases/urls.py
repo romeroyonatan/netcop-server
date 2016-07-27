@@ -18,4 +18,14 @@ urlpatterns = [
         views.ClaseUpdate.as_view(),
         name='update'
     ),
+    url(
+        r'^descarga/$',
+        views.ClaseJson.as_view(),
+        name='json'
+    ),
+    url(
+        r'^version/$',
+        views.VersionView.as_view(),
+        name='version'
+    ),
 ]
