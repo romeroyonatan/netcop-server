@@ -7,6 +7,11 @@ REGEX_CIDR = ("(?P<ip>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
               "(/(?P<prefijo>\d+))?")
 REGEX_PUERTO = "(?P<numero>\d+)(/(?P<protocolo>(tcp|udp)))?"
 
+PUERTO_MIN = 1
+PUERTO_MAX = 65535
+PREFIJO_MIN = 0
+PREFIJO_MAX = 32
+
 
 class ClaseForm(forms.ModelForm):
     '''
@@ -105,25 +110,27 @@ class ClaseForm(forms.ModelForm):
         '''
         Parsea y devuelve las cidr que contenga el string pasado por parametro.
         '''
-        p = re.compile(REGEX_CIDR, flags=re.M)
-        for m in p.finditer(string):
-            direccion = m.groupdict().get('ip')
-            prefijo = m.groupdict().get('prefijo') or 32
-            yield models.CIDR.objects.get_or_create(direccion=direccion,
-                                                    prefijo=prefijo)[0]
+        if string:
+            p = re.compile(REGEX_CIDR, flags=re.M)
+            for m in p.finditer(string):
+                direccion = m.groupdict().get('ip')
+                prefijo = m.groupdict().get('prefijo') or 32
+                yield models.CIDR.objects.get_or_create(
+                    direccion=direccion, prefijo=int(prefijo))[0]
 
     def obtener_puertos(self, string):
         '''
         Parsea y devuelve los puertos que contenga el string pasado por
         parametro.
         '''
-        p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
-        for m in p.finditer(string):
-            numero = m.groupdict().get('numero')
-            protocolo = m.groupdict().get('protocolo') or ''
-            protocolo = self.obtener_numero(protocolo)
-            yield models.Puerto.objects.get_or_create(numero=numero,
-                                                      protocolo=protocolo)[0]
+        if string:
+            p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
+            for m in p.finditer(string):
+                numero = m.groupdict().get('numero')
+                protocolo = m.groupdict().get('protocolo') or ''
+                protocolo = self.obtener_numero(protocolo)
+                yield models.Puerto.objects.get_or_create(
+                    numero=int(numero), protocolo=protocolo)[0]
 
     def obtener_numero(self, string):
         '''
@@ -139,3 +146,54 @@ class ClaseForm(forms.ModelForm):
         elif string.lower() == 'udp':
             return 17
         return 0
+
+    def clean_subredes_outside(self):
+        data = self.cleaned_data["subredes_outside"]
+        if data:
+            self.validar_subredes(data)
+        return data
+
+    def clean_subredes_inside(self):
+        data = self.cleaned_data["subredes_inside"]
+        if data:
+            self.validar_subredes(data)
+        return data
+
+    def clean_puertos_outside(self):
+        data = self.cleaned_data["puertos_outside"]
+        if data:
+            self.validar_puertos(data)
+        return data
+
+    def clean_puertos_inside(self):
+        data = self.cleaned_data["puertos_inside"]
+        if data:
+            self.validar_puertos(data)
+        return data
+
+    def validar_subredes(self, string):
+        '''
+        Valida que cada subred ingresada sea correcta.
+        '''
+        p = re.compile(REGEX_CIDR, flags=re.M)
+        for m in p.finditer(string):
+            direccion = m.groupdict().get('ip')
+            prefijo = m.groupdict().get('prefijo') or 32
+            if not PREFIJO_MIN <= int(prefijo) <= PREFIJO_MAX:
+                raise forms.ValidationError(
+                    "%s: El prefijo debe ser entre %d y %d" %
+                    (direccion, PREFIJO_MIN, PREFIJO_MAX)
+                )
+
+    def validar_puertos(self, string):
+        '''
+        Valida que cada puerto ingresado sea correcto.
+        '''
+        p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
+        for m in p.finditer(string):
+            numero = m.groupdict().get('numero')
+            if not PUERTO_MIN <= int(numero) <= PUERTO_MAX:
+                raise forms.ValidationError(
+                    "%s: el número de puerto debe ser entre %d y %d" %
+                    (numero, PUERTO_MIN, PUERTO_MAX)
+                )

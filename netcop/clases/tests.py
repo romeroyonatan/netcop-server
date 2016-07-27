@@ -35,9 +35,9 @@ class TestCreate(TestCase):
         """
         # creo formulario
         form = forms.ClaseForm(self.data)
+        assert form.is_valid()
         obj = form.save()
         # verifico que todo este bien
-        assert form.is_valid()
         self.assertEqual(obj.redes.count(), 8)
         assert (obj.redes.filter(cidr__direccion='192.168.1.1',
                                  cidr__prefijo=32,
@@ -92,9 +92,9 @@ class TestCreate(TestCase):
         """
         # creo formulario
         form = forms.ClaseForm(self.data)
+        assert form.is_valid()
         obj = form.save()
         # verifico que todo este bien
-        assert form.is_valid()
         self.assertEqual(obj.puertos.count(), 8)
         assert (obj.puertos.filter(puerto__numero=80,
                                    puerto__protocolo=6,
@@ -207,13 +207,23 @@ class TestCreate(TestCase):
         '''
         Prueba la validacion de subredes en el formulario de clases.
         '''
-        pass
+        # prefijo mayor a 32
+        self.data["subredes_outside"] = "192.168.0.255/33"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
 
     def test_validate_ports(self):
         '''
         Prueba la validacion de puertos en el formulario de clases.
         '''
-        pass
+        # puerto mayor a 65535
+        self.data["puertos_outside"] = "65536"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
+        # puerto cero
+        self.data["puertos_outside"] = "0"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
 
     def test_list(self):
         '''
