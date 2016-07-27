@@ -17,13 +17,13 @@
             {{ clase.descripcion }}
           </div>
           <div class="hide-for-small-only medium-2 columns">
-            {% for red in clase.redes.all %}
-              {{ red.cidr }}
+            {% for item in clase.redes.all %}
+              {{ item.cidr }}
             {% endfor %}
           </div>
           <div class="hide-for-small-only medium-2 columns">
-            {% for puerto in clase.puertos.all %}
-              {{ puerto.puerto }}
+            {% for item in clase.puertos.all %}
+              {{ item.puerto }}
             {% endfor %}
           </div>
           <div class="small-2 columns">

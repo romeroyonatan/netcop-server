@@ -1,6 +1,11 @@
+import re
+from . import models
 from django import forms
 
-from . import models
+REGEX_CIDR = ("(?P<ip>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
+              "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))"
+              "(/(?P<prefijo>\d+))?")
+
 
 class ClaseForm(forms.ModelForm):
     '''
@@ -65,20 +70,20 @@ class ClaseForm(forms.ModelForm):
         # borro antiguas relaciones
         models.ClaseCIDR.objects.filter(clase=clase).delete()
         models.ClasePuerto.objects.filter(clase=clase).delete()
+        
+        p = re.compile(REGEX_CIDR, flags=re.MULTILINE)
 
         # creo las nuevas relaciones
         for lista, grupo in redes:
-            for item in nueva.get(lista, "").split("\n"):
-                if item:
-                    (direccion, prefijo) = item.split('/')
-                    # TODO validar
-                    cidr = models.CIDR.objects.get_or_create(
-                        direccion=direccion,
-                        prefijo=prefijo
-                    )[0]
-                    models.ClaseCIDR.objects.create(clase=clase,
-                                                    cidr=cidr,
-                                                    grupo=grupo)
+            string = nueva.get(lista, "")
+            for m in p.finditer(string):
+                direccion = m.groupdict().get('ip')
+                prefijo = m.groupdict().get('prefijo') or 32
+                cidr = models.CIDR.objects.get_or_create(
+                    direccion=direccion,
+                    prefijo=prefijo
+                )[0]
+                clase.redes.create(clase=clase, cidr=cidr, grupo=grupo)
 
         for lista, grupo in puertos:
             for item in nueva.get(lista, "").split("\n"):
@@ -90,9 +95,8 @@ class ClaseForm(forms.ModelForm):
                         numero=numero,
                         protocolo=protocolo
                     )[0]
-                    models.ClasePuerto.objects.create(clase=clase,
-                                                      puerto=puerto,
-                                                      grupo=grupo)
+                    clases.puertos.create(clase=clase, puerto=puerto,
+                                          grupo=grupo)
 
     def protocolo(self, string):
         '''
