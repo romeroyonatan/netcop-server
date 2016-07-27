@@ -8,6 +8,7 @@ grupo_choices = (
     (OUTSIDE, "En Internet"),
 )
 
+
 class ClaseTrafico(models.Model):
     nombre = models.CharField(max_length=32, null=False)
     descripcion = models.CharField(max_length=160, null=False, default="")

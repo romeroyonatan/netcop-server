@@ -155,7 +155,7 @@ class TestCreate(TestCase):
 
         for item in redes_inside:
             clase.redes.create(cidr=item, grupo=models.INSIDE)
-        
+
         # creo formulario
         form = forms.ClaseForm(instance=clase)
         # verifico que todo este bien
@@ -192,7 +192,7 @@ class TestCreate(TestCase):
 
         for item in puertos_inside:
             clase.puertos.create(puerto=item, grupo=models.INSIDE)
-        
+
         # creo formulario
         form = forms.ClaseForm(instance=clase)
         # verifico que todo este bien
@@ -202,7 +202,7 @@ class TestCreate(TestCase):
         assert "443/tcp" in form.initial["puertos_inside"]
         assert "137/udp" in form.initial["puertos_inside"]
         assert "21" in form.initial["puertos_inside"]
-        
+
     def test_validate_subnet(self):
         '''
         Prueba la validacion de subredes en el formulario de clases.

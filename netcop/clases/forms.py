@@ -53,7 +53,7 @@ class ClaseForm(forms.ModelForm):
         Si no se especifica protocolo, se asume que el puerto puede pertenecer
         a cualquiera de ellos.""",
     )
-    
+
     def __init__(self, *args, **kwargs):
         r = super().__init__(*args, **kwargs)
         if kwargs.get('instance'):
@@ -89,7 +89,7 @@ class ClaseForm(forms.ModelForm):
         # borro antiguas relaciones
         models.ClaseCIDR.objects.filter(clase=clase).delete()
         models.ClasePuerto.objects.filter(clase=clase).delete()
-        
+
         # creo las nuevas relaciones
         for nombre, grupo in redes:
             string = campos.get(nombre, "")
@@ -114,7 +114,7 @@ class ClaseForm(forms.ModelForm):
 
     def obtener_puertos(self, string):
         '''
-        Parsea y devuelve los puertos que contenga el string pasado por 
+        Parsea y devuelve los puertos que contenga el string pasado por
         parametro.
         '''
         p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
