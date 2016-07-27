@@ -17,15 +17,15 @@
         {% for clase in object_list %}
           <tr>
             <td><a href="{% url 'update' clase.pk %}">{{ clase.id }}</a></td>
-            <td>{{ clase.nombre }}</td>
-            <td>{{ clase.descripcion|truncatechars:20 }}</td>
             <td>
               {% if clase.activa %}
                 <span class="success badge" title="Activa"><i class="fa fa-check"></i></span>
               {% else %}
                 <span class="secondary badge" title="Inactiva"><i class="fa fa-times"></i></span>
               {% endif %}
+              {{ clase.nombre }}
             </td>
+            <td>{{ clase.descripcion|truncatechars:20 }}</td>
             <td class="hide-for-small-only">{{ clase.redes.count }}</td>
             <td class="hide-for-small-only">{{ clase.puertos.count }}</td>
           </tr>
