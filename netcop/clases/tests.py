@@ -77,7 +77,57 @@ class TestCreate(TestCase):
         Prueba parsear la lista de puertso pasadas al crear o actualizar una
         clase de tráfico.
         '''
-        pass
+        # preparo parametros
+        self.data["puertos_outside"] = """
+            80/tcp
+            443/tcp
+            22
+            21/udp
+        """
+        self.data["puertos_inside"] = """
+            1025/udp
+            65535/UDP
+            1
+            22
+        """
+        # creo formulario
+        form = forms.ClaseForm(self.data)
+        obj = form.save()
+        # verifico que todo este bien
+        assert form.is_valid()
+        self.assertEqual(obj.puertos.count(), 8)
+        assert (obj.puertos.filter(puerto__numero=80,
+                                   puerto__protocolo=6,
+                                   grupo=models.OUTSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=443,
+                                   puerto__protocolo=6,
+                                   grupo=models.OUTSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=22,
+                                   puerto__protocolo=0,
+                                   grupo=models.OUTSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=21,
+                                   puerto__protocolo=17,
+                                   grupo=models.OUTSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=1025,
+                                   puerto__protocolo=17,
+                                   grupo=models.INSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=65535,
+                                   puerto__protocolo=17,
+                                   grupo=models.INSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=1,
+                                   puerto__protocolo=0,
+                                   grupo=models.INSIDE)
+                           .exists())
+        assert (obj.puertos.filter(puerto__numero=22,
+                                   puerto__protocolo=0,
+                                   grupo=models.INSIDE)
+                           .exists())
 
     def test_load_subnet(self):
         '''

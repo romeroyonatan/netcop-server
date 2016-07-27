@@ -5,6 +5,7 @@ from django import forms
 REGEX_CIDR = ("(?P<ip>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
               "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))"
               "(/(?P<prefijo>\d+))?")
+REGEX_PUERTO = "(?P<numero>\d+)(/(?P<protocolo>(tcp|udp)))?"
 
 
 class ClaseForm(forms.ModelForm):
@@ -58,7 +59,7 @@ class ClaseForm(forms.ModelForm):
         self.actualizar_colecciones(clase, self.cleaned_data)
         return clase
 
-    def actualizar_colecciones(self, clase, nueva):
+    def actualizar_colecciones(self, clase, campos):
         '''
         Actualiza las listas de subredes y puertos de la clase de trafico.
         '''
@@ -71,34 +72,42 @@ class ClaseForm(forms.ModelForm):
         models.ClaseCIDR.objects.filter(clase=clase).delete()
         models.ClasePuerto.objects.filter(clase=clase).delete()
         
-        p = re.compile(REGEX_CIDR, flags=re.MULTILINE)
-
         # creo las nuevas relaciones
-        for lista, grupo in redes:
-            string = nueva.get(lista, "")
-            for m in p.finditer(string):
-                direccion = m.groupdict().get('ip')
-                prefijo = m.groupdict().get('prefijo') or 32
-                cidr = models.CIDR.objects.get_or_create(
-                    direccion=direccion,
-                    prefijo=prefijo
-                )[0]
+        for nombre, grupo in redes:
+            string = campos.get(nombre, "")
+            for cidr in self.obtener_cidr(string):
                 clase.redes.create(clase=clase, cidr=cidr, grupo=grupo)
 
-        for lista, grupo in puertos:
-            for item in nueva.get(lista, "").split("\n"):
-                if item:
-                    (numero, proto) = item.split('/')
-                    # TODO validar
-                    protocolo = self.protocolo(proto)
-                    puerto = models.Puerto.objects.get_or_create(
-                        numero=numero,
-                        protocolo=protocolo
-                    )[0]
-                    clases.puertos.create(clase=clase, puerto=puerto,
-                                          grupo=grupo)
+        for nombre, grupo in puertos:
+            string = campos.get(nombre, "")
+            for puerto in self.obtener_puertos(string):
+                clase.puertos.create(clase=clase, puerto=puerto, grupo=grupo)
 
-    def protocolo(self, string):
+    def obtener_cidr(self, string):
+        '''
+        Parsea y devuelve las cidr que contenga el string pasado por parametro.
+        '''
+        p = re.compile(REGEX_CIDR, flags=re.M)
+        for m in p.finditer(string):
+            direccion = m.groupdict().get('ip')
+            prefijo = m.groupdict().get('prefijo') or 32
+            yield models.CIDR.objects.get_or_create(direccion=direccion,
+                                                    prefijo=prefijo)[0]
+
+    def obtener_puertos(self, string):
+        '''
+        Parsea y devuelve los puertos que contenga el string pasado por 
+        parametro.
+        '''
+        p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
+        for m in p.finditer(string):
+            numero = m.groupdict().get('numero')
+            protocolo = m.groupdict().get('protocolo') or ''
+            protocolo = self.obtener_numero(protocolo)
+            yield models.Puerto.objects.get_or_create(numero=numero,
+                                                      protocolo=protocolo)[0]
+
+    def obtener_numero(self, string):
         '''
         Obtiene el numero de protocolo en base a una cadena de caracteres.
         Retornos
