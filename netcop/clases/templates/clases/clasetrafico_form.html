@@ -4,6 +4,20 @@
     <div class="small-12 medium-9 medium-centered columns">
       <h1>Editar clase de tráfico</h1>
       <form action="." method="post"> {% csrf_token %}
+
+        {# Botones  #}
+        {# ---------------------------------------------------------------- #}
+        <button type="submit" class="success button">
+          <i class="fa fa-save"></i>
+          Guardar
+        </button>
+        <a href="{% url 'index' %}" class="warning button">
+          <i class="fa fa-times"></i>
+          Cancelar
+        </a>
+
+        {# Formulario  #}
+        {# ---------------------------------------------------------------- #}
         {% for field in form %}
           <div class="row">
             <div class="small-12 columns">
@@ -19,6 +33,9 @@
             </div>
           </div>
         {% endfor %}
+
+        {# Botones  #}
+        {# ---------------------------------------------------------------- #}
         <button type="submit" class="success button">
           <i class="fa fa-save"></i>
           Guardar
