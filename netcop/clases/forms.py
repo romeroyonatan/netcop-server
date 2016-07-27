@@ -110,27 +110,25 @@ class ClaseForm(forms.ModelForm):
         '''
         Parsea y devuelve las cidr que contenga el string pasado por parametro.
         '''
-        if string:
-            p = re.compile(REGEX_CIDR, flags=re.M)
-            for m in p.finditer(string):
-                direccion = m.groupdict().get('ip')
-                prefijo = m.groupdict().get('prefijo') or 32
-                yield models.CIDR.objects.get_or_create(
-                    direccion=direccion, prefijo=int(prefijo))[0]
+        p = re.compile(REGEX_CIDR, flags=re.M)
+        for m in p.finditer(string):
+            direccion = m.groupdict().get('ip')
+            prefijo = m.groupdict().get('prefijo') or 32
+            yield models.CIDR.objects.get_or_create(
+                direccion=direccion, prefijo=int(prefijo))[0]
 
     def obtener_puertos(self, string):
         '''
         Parsea y devuelve los puertos que contenga el string pasado por
         parametro.
         '''
-        if string:
-            p = re.compile(REGEX_PUERTO, flags=re.I|re.M)
-            for m in p.finditer(string):
-                numero = m.groupdict().get('numero')
-                protocolo = m.groupdict().get('protocolo') or ''
-                protocolo = self.obtener_numero(protocolo)
-                yield models.Puerto.objects.get_or_create(
-                    numero=int(numero), protocolo=protocolo)[0]
+        p = re.compile(REGEX_PUERTO, flags=re.I | re.M)
+        for m in p.finditer(string):
+            numero = m.groupdict().get('numero')
+            protocolo = m.groupdict().get('protocolo') or ''
+            protocolo = self.obtener_numero(protocolo)
+            yield models.Puerto.objects.get_or_create(
+                numero=int(numero), protocolo=protocolo)[0]
 
     def obtener_numero(self, string):
         '''
