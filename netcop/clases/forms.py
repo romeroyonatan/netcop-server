@@ -2,10 +2,10 @@ import re
 from . import models
 from django import forms
 
-REGEX_CIDR = ("(?P<ip>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
+REGEX_CIDR = ("^\s*(?P<ip>((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}"
               "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))"
-              "(/(?P<prefijo>\d+))?")
-REGEX_PUERTO = "(?P<numero>\d+)(/(?P<protocolo>(tcp|udp)))?"
+              "(/(?P<prefijo>\d+))?\s*$")
+REGEX_PUERTO = "^\s*(?P<numero>\d+)(/(?P<protocolo>(tcp|udp)))?\s*$"
 
 PUERTO_MIN = 1
 PUERTO_MAX = 65535
@@ -124,7 +124,7 @@ class ClaseForm(forms.ModelForm):
         parametro.
         '''
         if string:
-            p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
+            p = re.compile(REGEX_PUERTO, flags=re.I|re.M)
             for m in p.finditer(string):
                 numero = m.groupdict().get('numero')
                 protocolo = m.groupdict().get('protocolo') or ''
@@ -148,24 +148,36 @@ class ClaseForm(forms.ModelForm):
         return 0
 
     def clean_subredes_outside(self):
+        '''
+        Metodo ejecutado al validar el campo subredes_outside.
+        '''
         data = self.cleaned_data["subredes_outside"]
         if data:
             self.validar_subredes(data)
         return data
 
     def clean_subredes_inside(self):
+        '''
+        Metodo ejecutado al validar el campo subredes_inside.
+        '''
         data = self.cleaned_data["subredes_inside"]
         if data:
             self.validar_subredes(data)
         return data
 
     def clean_puertos_outside(self):
+        '''
+        Metodo ejecutado al validar el campo puertos_outside.
+        '''
         data = self.cleaned_data["puertos_outside"]
         if data:
             self.validar_puertos(data)
         return data
 
     def clean_puertos_inside(self):
+        '''
+        Metodo ejecutado al validar el campo puertos_inside.
+        '''
         data = self.cleaned_data["puertos_inside"]
         if data:
             self.validar_puertos(data)
@@ -175,8 +187,12 @@ class ClaseForm(forms.ModelForm):
         '''
         Valida que cada subred ingresada sea correcta.
         '''
-        p = re.compile(REGEX_CIDR, flags=re.M)
-        for m in p.finditer(string):
+        p = re.compile(REGEX_CIDR)
+        for line in string.splitlines():
+            line = line.strip()
+            m = p.match(line)
+            if m is None:
+                raise forms.ValidationError("%s: Error de sintaxis" % line)
             direccion = m.groupdict().get('ip')
             prefijo = m.groupdict().get('prefijo') or 32
             if not PREFIJO_MIN <= int(prefijo) <= PREFIJO_MAX:
@@ -189,8 +205,12 @@ class ClaseForm(forms.ModelForm):
         '''
         Valida que cada puerto ingresado sea correcto.
         '''
-        p = re.compile(REGEX_PUERTO, flags=re.M | re.I)
-        for m in p.finditer(string):
+        p = re.compile(REGEX_PUERTO, flags=re.I)
+        for line in string.splitlines():
+            line = line.strip()
+            m = p.match(line)
+            if m is None:
+                raise forms.ValidationError("%s: Error de sintaxis" % line)
             numero = m.groupdict().get('numero')
             if not PUERTO_MIN <= int(numero) <= PUERTO_MAX:
                 raise forms.ValidationError(

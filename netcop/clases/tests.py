@@ -1,3 +1,4 @@
+import unittest
 from django.test import TestCase
 
 from . import forms, models
@@ -211,6 +212,28 @@ class TestCreate(TestCase):
         self.data["subredes_outside"] = "192.168.0.255/33"
         form = forms.ClaseForm(self.data)
         assert not form.is_valid()
+        # red inexistente
+        self.data["subredes_outside"] = "256.168.0.0/32"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
+        self.data["subredes_outside"] = "253.256.0.0/32"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
+        self.data["subredes_outside"] = "253.168.256.0/32"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
+        self.data["subredes_outside"] = "253.168.0.256/32"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
+        # dos bien y uno mal
+        self.data["subredes_outside"] = """
+            192.168.1.1
+            253.0.0.256
+            10.200.0.0/33
+            10.0.0.0/8
+        """
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
 
     def test_validate_ports(self):
         '''
@@ -224,19 +247,34 @@ class TestCreate(TestCase):
         self.data["puertos_outside"] = "0"
         form = forms.ClaseForm(self.data)
         assert not form.is_valid()
+        # protocolo no reconocido
+        self.data["puertos_outside"] = "22/icmp"
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
+        # dos bien y uno mal
+        self.data["puertos_inside"] = """
+            80/tcp
+            0
+            53/udp
+        """
+        form = forms.ClaseForm(self.data)
+        assert not form.is_valid()
 
+    @unittest.skip("No implementado")
     def test_list(self):
         '''
         Prueba obtener la lista de clases de trafico instaladas.
         '''
         pass
 
+    @unittest.skip("No implementado")
     def test_json(self):
         '''
         Prueba obtener la lista de clases de trafico instaladas en formato JSON
         '''
         pass
 
+    @unittest.skip("No implementado")
     def test_version(self):
         '''
         Prueba obtener el numero de version de las clases instaladas.
