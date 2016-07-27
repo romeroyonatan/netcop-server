@@ -32,10 +32,10 @@ class Puerto(models.Model):
     def __str__(self):
         protocolo = ''
         if self.protocolo == 6:
-            protocolo = 'tcp'
+            protocolo = '/tcp'
         elif self.protocolo == 17:
-            protocolo = 'udp'
-        return "%d/%s" % (self.numero, protocolo)
+            protocolo = '/udp'
+        return "%d%s" % (self.numero, protocolo)
 
 
 class ClaseCIDR(models.Model):

@@ -53,6 +53,24 @@ class ClaseForm(forms.ModelForm):
         Si no se especifica protocolo, se asume que el puerto puede pertenecer
         a cualquiera de ellos.""",
     )
+    
+    def __init__(self, *args, **kwargs):
+        r = super().__init__(*args, **kwargs)
+        if kwargs.get('instance'):
+            instance = kwargs.get('instance')
+            redes_outside = [str(item.cidr) for item in
+                             instance.redes.filter(grupo=models.OUTSIDE)]
+            redes_inside = [str(item.cidr) for item in
+                            instance.redes.filter(grupo=models.INSIDE)]
+            puertos_outside = [str(item.puerto) for item in
+                               instance.puertos.filter(grupo=models.OUTSIDE)]
+            puertos_inside = [str(item.puerto) for item in
+                              instance.puertos.filter(grupo=models.INSIDE)]
+            self.initial["subredes_outside"] = "\n".join(redes_outside)
+            self.initial["subredes_inside"] = "\n".join(redes_inside)
+            self.initial["puertos_outside"] = "\n".join(puertos_outside)
+            self.initial["puertos_inside"] = "\n".join(puertos_inside)
+        return r
 
     def save(self, *args, **kwargs):
         clase = super().save(*args, **kwargs)

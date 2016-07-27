@@ -133,11 +133,85 @@ class TestCreate(TestCase):
         '''
         Prueba la carga de subredes al actualizar una clase de trafico.
         '''
-        pass
+        # preparo datos
+        clase = models.ClaseTrafico.objects.create(
+            id=606060,
+            nombre='foo',
+            descripcion='bar',
+        )
+        redes_outside = [
+            models.CIDR.objects.create(direccion='0.0.0.0', prefijo=0),
+            models.CIDR.objects.create(direccion='1.0.0.0', prefijo=1),
+            models.CIDR.objects.create(direccion='3.3.3.3', prefijo=32),
+        ]
+        redes_inside = [
+            models.CIDR.objects.create(direccion='10.0.0.0', prefijo=8),
+            models.CIDR.objects.create(direccion='172.16.0.0', prefijo=12),
+            models.CIDR.objects.create(direccion='192.168.0.0', prefijo=16),
+        ]
+
+        for item in redes_outside:
+            clase.redes.create(cidr=item, grupo=models.OUTSIDE)
+
+        for item in redes_inside:
+            clase.redes.create(cidr=item, grupo=models.INSIDE)
+        
+        # creo formulario
+        form = forms.ClaseForm(instance=clase)
+        # verifico que todo este bien
+        assert "0.0.0.0/0" in form.initial["subredes_outside"]
+        assert "1.0.0.0/1" in form.initial["subredes_outside"]
+        assert "3.3.3.3/32" in form.initial["subredes_outside"]
+        assert "10.0.0.0/8" in form.initial["subredes_inside"]
+        assert "172.16.0.0/12" in form.initial["subredes_inside"]
+        assert "192.168.0.0/16" in form.initial["subredes_inside"]
 
     def test_load_ports(self):
         '''
         Prueba la carga de puertos al actualizar una clase de trafico.
+        '''
+        # preparo datos
+        clase = models.ClaseTrafico.objects.create(
+            id=606060,
+            nombre='foo',
+            descripcion='bar',
+        )
+        puertos_outside = [
+            models.Puerto.objects.create(numero=80, protocolo=6),
+            models.Puerto.objects.create(numero=53, protocolo=17),
+            models.Puerto.objects.create(numero=22, protocolo=0),
+        ]
+        puertos_inside = [
+            models.Puerto.objects.create(numero=443, protocolo=6),
+            models.Puerto.objects.create(numero=137, protocolo=17),
+            models.Puerto.objects.create(numero=21, protocolo=0),
+        ]
+
+        for item in puertos_outside:
+            clase.puertos.create(puerto=item, grupo=models.OUTSIDE)
+
+        for item in puertos_inside:
+            clase.puertos.create(puerto=item, grupo=models.INSIDE)
+        
+        # creo formulario
+        form = forms.ClaseForm(instance=clase)
+        # verifico que todo este bien
+        assert "80/tcp" in form.initial["puertos_outside"]
+        assert "53/udp" in form.initial["puertos_outside"]
+        assert "22" in form.initial["puertos_outside"]
+        assert "443/tcp" in form.initial["puertos_inside"]
+        assert "137/udp" in form.initial["puertos_inside"]
+        assert "21" in form.initial["puertos_inside"]
+        
+    def test_validate_subnet(self):
+        '''
+        Prueba la validacion de subredes en el formulario de clases.
+        '''
+        pass
+
+    def test_validate_ports(self):
+        '''
+        Prueba la validacion de puertos en el formulario de clases.
         '''
         pass
 
