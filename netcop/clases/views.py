@@ -45,6 +45,7 @@ class ClaseJson(generic.View):
             r['id'] = clase.id
             r['nombre'] = clase.nombre
             r['descripcion'] = clase.descripcion
+            r['activa'] = clase.activa
             r['subredes_outside'] = [
                 str(item) for item in clase.redes.filter(grupo=models.OUTSIDE)
             ]
