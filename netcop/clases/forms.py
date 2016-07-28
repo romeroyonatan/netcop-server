@@ -193,16 +193,17 @@ class ClaseForm(forms.ModelForm):
         p = re.compile(REGEX_CIDR)
         for line in string.splitlines():
             line = line.strip()
-            m = p.match(line)
-            if m is None:
-                raise forms.ValidationError("%s: Error de sintaxis" % line)
-            direccion = m.groupdict().get('ip')
-            prefijo = m.groupdict().get('prefijo') or 32
-            if not PREFIJO_MIN <= int(prefijo) <= PREFIJO_MAX:
-                raise forms.ValidationError(
-                    "%s: El prefijo debe ser entre %d y %d" %
-                    (direccion, PREFIJO_MIN, PREFIJO_MAX)
-                )
+            if line:
+                m = p.match(line)
+                if m is None:
+                    raise forms.ValidationError("%s: Error de sintaxis" % line)
+                direccion = m.groupdict().get('ip')
+                prefijo = m.groupdict().get('prefijo') or 32
+                if not PREFIJO_MIN <= int(prefijo) <= PREFIJO_MAX:
+                    raise forms.ValidationError(
+                        "%s: El prefijo debe ser entre %d y %d" %
+                        (direccion, PREFIJO_MIN, PREFIJO_MAX)
+                    )
 
     def validar_puertos(self, string):
         '''
@@ -211,15 +212,16 @@ class ClaseForm(forms.ModelForm):
         p = re.compile(REGEX_PUERTO, flags=re.I)
         for line in string.splitlines():
             line = line.strip()
-            m = p.match(line)
-            if m is None:
-                raise forms.ValidationError("%s: Error de sintaxis" % line)
-            numero = m.groupdict().get('numero')
-            if not PUERTO_MIN <= int(numero) <= PUERTO_MAX:
-                raise forms.ValidationError(
-                    "%s: el número de puerto debe ser entre %d y %d" %
-                    (numero, PUERTO_MIN, PUERTO_MAX)
-                )
+            if line:
+                m = p.match(line)
+                if m is None:
+                    raise forms.ValidationError("%s: Error de sintaxis" % line)
+                numero = m.groupdict().get('numero')
+                if not PUERTO_MIN <= int(numero) <= PUERTO_MAX:
+                    raise forms.ValidationError(
+                        "%s: el número de puerto debe ser entre %d y %d" %
+                        (numero, PUERTO_MIN, PUERTO_MAX)
+                    )
 
     def calcular_version(self):
         '''
