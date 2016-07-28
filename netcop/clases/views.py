@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse, Http404
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from . import models, forms
 
@@ -19,13 +20,13 @@ class ClaseList(generic.ListView):
         return qs
 
 
-class ClaseCreate(generic.CreateView):
+class ClaseCreate(LoginRequiredMixin, generic.CreateView):
     model = models.ClaseTrafico
     success_url = reverse_lazy('index')
     form_class = forms.ClaseForm
 
 
-class ClaseUpdate(generic.UpdateView):
+class ClaseUpdate(LoginRequiredMixin, generic.UpdateView):
     model = models.ClaseTrafico
     form_class = forms.ClaseForm
     success_url = reverse_lazy('index')

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block body_attrs %}class="login"{% endblock %}
+
+{% block body %}
+<div class="login-form">
+
+  <div class="row">
+    <div class="small-12 columns">
+      <h1>Netcop <small>Iniciar sesión</small></h1>
+    </div>
+    <div class="small-12 columns callout secondary">
+    {% if form.errors or user.is_authenticated %}
+      <div class="small-12 columns callout alert">
+          <h5>Atención</h5>
+          {% if form.errors %}
+            <p>Inicio de sesión incorrecto</p>
+          {% endif %}
+          
+          {% if next %}
+            {% if user.is_authenticated %}
+              <p>No tiene permisos para ver esta página</p>
+            {% endif %}
+          {% endif %}
+      </div>
+    {% endif %}
+    
+      <form method="post" action="{% url 'login' %}">{% csrf_token %}
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {{ form.password.label_tag }}
+        {{ form.password }}
+        <input type="submit" class="primary button" value="Login" />
+        <input type="hidden" name="next" value="{{ next }}" />
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

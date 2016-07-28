@@ -1,0 +1,9 @@
+body.login {
+    background-image: url("bg.svg");
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.login .login-form {
+    padding-top:10%;
+}

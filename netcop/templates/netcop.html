@@ -13,6 +13,12 @@
           </div>
           <div class="top-bar-right">
             <ul class="menu">
+              {% if user.is_authenticated %}
+                <li>
+                  <a href="{% url 'logout' %}" class="alert button"
+                     title="Cerrar sesión"><i class="fa fa-sign-out"></i></a>
+                </li>
+              {% endif %}
               <li>
                 <input type="search" name="q" placeholder="Buscar"
                        value="{{ request.GET.q }}"/>

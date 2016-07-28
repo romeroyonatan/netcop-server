@@ -124,6 +124,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+LOGIN_REDIRECT_URL = '/'
+
 # openshift is our PAAS for now.
 if 'OPENSHIFT_REPO_DIR' in os.environ:
     try:
