@@ -14,7 +14,7 @@ LOG_DIR = os.environ.get('OPENSHIFT_LOG_DIR', '')
 
 # dominios en los que el sitio funciona. sirve para prevenir ataques
 ALLOWED_HOSTS = ['.rhcloud.com', '.netcop.ftp.sh']
-DEBUG=False
+DEBUG = False
 
 POSTGRE_USERNAME = os.environ.get('OPENSHIFT_POSTGRESQL_DB_USERNAME', '')
 POSTGRE_PASSWORD = os.environ.get('OPENSHIFT_POSTGRESQL_DB_PASSWORD', '')

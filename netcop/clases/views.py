@@ -15,6 +15,7 @@ class LoginRequiredMixin(object):
         view = super(LoginRequiredMixin, cls).as_view(*args, **kwargs)
         return login_required(view)
 
+
 class ClaseList(generic.ListView):
     model = models.ClaseTrafico
     ordering = ('-activa', 'id')

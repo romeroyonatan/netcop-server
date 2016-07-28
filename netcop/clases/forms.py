@@ -68,28 +68,28 @@ class ClaseForm(forms.ModelForm):
         if kwargs.get('instance'):
             instance = kwargs.get('instance')
             redes_outside = [
-                str(item.cidr) for item in instance
-                                           .redes
-                                           .filter(grupo=models.OUTSIDE)
-                                           .order_by('cidr__direccion')
+                str(item.cidr)
+                for item in instance.redes
+                                    .filter(grupo=models.OUTSIDE)
+                                    .order_by('cidr__direccion')
             ]
             redes_inside = [
-                str(item.cidr) for item in instance
-                                           .redes
-                                           .filter(grupo=models.INSIDE)
-                                           .order_by('cidr__direccion')
+                str(item.cidr)
+                for item in instance.redes
+                                    .filter(grupo=models.INSIDE)
+                                    .order_by('cidr__direccion')
             ]
             puertos_outside = [
-                str(item.puerto) for item in instance
-                                             .puertos
-                                             .filter(grupo=models.OUTSIDE)
-                                             .order_by('puerto__numero')
+                str(item.puerto)
+                for item in instance.puertos
+                                    .filter(grupo=models.OUTSIDE)
+                                    .order_by('puerto__numero')
             ]
             puertos_inside = [
-                str(item.puerto) for item in instance
-                                             .puertos
-                                             .filter(grupo=models.INSIDE)
-                                             .order_by('puerto__numero')
+                str(item.puerto)
+                for item in instance.puertos
+                                    .filter(grupo=models.INSIDE)
+                                    .order_by('puerto__numero')
             ]
             self.initial["subredes_outside"] = "\n".join(redes_outside)
             self.initial["subredes_inside"] = "\n".join(redes_inside)

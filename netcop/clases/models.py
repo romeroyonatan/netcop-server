@@ -25,7 +25,7 @@ class CIDR(models.Model):
 
     def __str__(self):
         return "%s/%d" % (self.direccion, self.prefijo)
-    
+
     def save(self, *args, **kwargs):
         '''
         Convierte el atributo direccion a una direccion de red antes de
