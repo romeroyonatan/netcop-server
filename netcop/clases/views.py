@@ -31,7 +31,7 @@ class ClaseList(generic.ListView):
             if re.match("^\d+$", q):
                 filters |= Q(puertos__puerto__numero=q)
                 filters |= Q(pk=q)
-            qs = qs.filter(filters)
+            qs = qs.filter(filters).distinct()
         return qs
 
 
