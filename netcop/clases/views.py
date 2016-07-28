@@ -3,10 +3,17 @@ from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse, Http404
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from . import models, forms
 
+
+class LoginRequiredMixin(object):
+
+    @classmethod
+    def as_view(cls, *args, **kwargs):
+        view = super(LoginRequiredMixin, cls).as_view(*args, **kwargs)
+        return login_required(view)
 
 class ClaseList(generic.ListView):
     model = models.ClaseTrafico
