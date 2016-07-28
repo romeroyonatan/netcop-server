@@ -1,4 +1,5 @@
 import os
+import re
 from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 from django.http import JsonResponse, Http404
@@ -24,9 +25,13 @@ class ClaseList(generic.ListView):
         qs = super().get_queryset(*args, **kwargs)
         q = self.request.GET.get('q')
         if q:
-            qs = qs.filter(Q(nombre__icontains=q) |
-                           Q(descripcion__icontains=q) |
-                           Q(redes__cidr__direccion__contains=q))
+            filters = (Q(nombre__icontains=q) |
+                       Q(descripcion__icontains=q) |
+                       Q(redes__cidr__direccion__contains=q))
+            if re.match("^\d+$", q):
+                filters |= Q(puertos__puerto__numero=q)
+                filters |= Q(pk=q)
+            qs = qs.filter(filters)
         return qs
 
 
