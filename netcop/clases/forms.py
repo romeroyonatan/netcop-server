@@ -67,14 +67,30 @@ class ClaseForm(forms.ModelForm):
         r = super().__init__(*args, **kwargs)
         if kwargs.get('instance'):
             instance = kwargs.get('instance')
-            redes_outside = [str(item.cidr) for item in
-                             instance.redes.filter(grupo=models.OUTSIDE)]
-            redes_inside = [str(item.cidr) for item in
-                            instance.redes.filter(grupo=models.INSIDE)]
-            puertos_outside = [str(item.puerto) for item in
-                               instance.puertos.filter(grupo=models.OUTSIDE)]
-            puertos_inside = [str(item.puerto) for item in
-                              instance.puertos.filter(grupo=models.INSIDE)]
+            redes_outside = [
+                str(item.cidr) for item in instance
+                                           .redes
+                                           .filter(grupo=models.OUTSIDE)
+                                           .order_by('cidr__direccion')
+            ]
+            redes_inside = [
+                str(item.cidr) for item in instance
+                                           .redes
+                                           .filter(grupo=models.INSIDE)
+                                           .order_by('cidr__direccion')
+            ]
+            puertos_outside = [
+                str(item.puerto) for item in instance
+                                             .puertos
+                                             .filter(grupo=models.OUTSIDE)
+                                             .order_by('puerto__numero')
+            ]
+            puertos_inside = [
+                str(item.puerto) for item in instance
+                                             .puertos
+                                             .filter(grupo=models.INSIDE)
+                                             .order_by('puerto__numero')
+            ]
             self.initial["subredes_outside"] = "\n".join(redes_outside)
             self.initial["subredes_inside"] = "\n".join(redes_inside)
             self.initial["puertos_outside"] = "\n".join(puertos_outside)
