@@ -4,7 +4,7 @@ from django.views import generic
 from django.http import JsonResponse, Http404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 from . import models, forms
 
 
@@ -24,7 +24,9 @@ class ClaseList(generic.ListView):
         qs = super().get_queryset(*args, **kwargs)
         q = self.request.GET.get('q')
         if q:
-            qs = qs.filter(nombre__contains=q)
+            qs = qs.filter(Q(nombre__icontains=q) |
+                           Q(descripcion__icontains=q) |
+                           Q(redes__cidr__direccion__contains=q))
         return qs
 
 
