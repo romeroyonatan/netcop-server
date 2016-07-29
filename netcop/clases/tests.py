@@ -33,6 +33,7 @@ class TestCreate(TestCase):
             192.168.2.0/24
             10.200.0.0/16
             10.0.0.1/8
+            192.168.2.0/24
         """
         # creo formulario
         form = forms.ClaseForm(self.data)

@@ -120,12 +120,13 @@ class ClaseForm(forms.ModelForm):
         for nombre, grupo in redes:
             string = campos.get(nombre, "")
             for cidr in self.obtener_cidr(string):
-                clase.redes.create(clase=clase, cidr=cidr, grupo=grupo)
+                clase.redes.get_or_create(clase=clase, cidr=cidr, grupo=grupo)
 
         for nombre, grupo in puertos:
             string = campos.get(nombre, "")
             for puerto in self.obtener_puertos(string):
-                clase.puertos.create(clase=clase, puerto=puerto, grupo=grupo)
+                clase.puertos.get_or_create(clase=clase, puerto=puerto,
+                                            grupo=grupo)
 
     def obtener_cidr(self, string):
         '''
