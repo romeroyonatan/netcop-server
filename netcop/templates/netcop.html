@@ -11,9 +11,7 @@
                 <img alt="Netcop" class="brand" src="{% static 'img/netcop.png' %}"/>
               </li>
               <li><a href="{% url 'index' %}">Lista de clases</a></li>
-              {% if user.is_authenticated %}
-                <li><a href="{% url 'create' %}">Crear clase</a></li>
-              {% endif %}
+              <li><a href="{% url 'create' %}">Crear clase</a></li>
             </ul>
           </div>
           <div class="top-bar-right">
