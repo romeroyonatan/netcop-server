@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block body %}
   <div class="expanded row">
     <div class="small-12 columns">
@@ -6,9 +7,13 @@
         <div class="top-bar">
           <div class="top-bar-left">
             <ul class="dropdown menu" data-dropdown-menu>
-              <li class="menu-text">Netcop</li>
+              <li>
+                <img alt="Netcop" class="brand" src="{% static 'img/netcop.png' %}"/>
+              </li>
               <li><a href="{% url 'index' %}">Lista de clases</a></li>
-              <li><a href="{% url 'create' %}">Crear clase</a></li>
+              {% if user.is_authenticated %}
+                <li><a href="{% url 'create' %}">Crear clase</a></li>
+              {% endif %}
             </ul>
           </div>
           <div class="top-bar-right">
