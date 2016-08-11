@@ -91,4 +91,4 @@ ENV/
 *.swp
 *.sqlite3
 netcop/static/bower_components
-netcop/version
+netcop/version.json
